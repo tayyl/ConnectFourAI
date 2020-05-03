@@ -14,13 +14,28 @@ Title="MainWindow" Height="900" Width="900" ResizeMode="NoResize" SizeToContent=
     </Window.DataContext>
     <StackPanel>
         <Canvas Width="890" Height="100">
-            
+            <Button RenderTransformOrigin="1,0" >
+                <Button.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-236.976"/>
+                        <TranslateTransform X="-1.4131" Y="4.76687"/>
+                    </TransformGroup>
+                </Button.RenderTransform>
+            </Button>
         </Canvas>
         <Canvas Width="{Binding GameBoardWidth}" Height="{Binding GameBoardHeight}" Background="#FF26BAFF" >
             <i:Interaction.Behaviors>
                 <vm:MouseBehaviour MouseX="{Binding PanelX, Mode=OneWayToSource}"
                                           MouseY="{Binding PanelY, Mode=OneWayToSource}" />
             </i:Interaction.Behaviors>
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="MouseLeftButtonUp">
+                    <i:InvokeCommandAction Command="{Binding PlaceCoin}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            
             <ItemsControl ItemsSource="{Binding CircleItems}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -29,7 +44,7 @@ Title="MainWindow" Height="900" Width="900" ResizeMode="NoResize" SizeToContent=
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Ellipse Width="{Binding R}" Height="{Binding R}" Fill="AliceBlue">
+                        <Ellipse Width="{Binding R}" Height="{Binding R}" Fill="AliceBlue" >
                             <Ellipse.RenderTransform>
                                 <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
                             </Ellipse.RenderTransform>

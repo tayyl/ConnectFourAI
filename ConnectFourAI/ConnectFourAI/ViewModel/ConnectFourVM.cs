@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ConnectFourAI.Model;
 namespace ConnectFourAI.ViewModel
 {
@@ -48,6 +49,16 @@ namespace ConnectFourAI.ViewModel
         private double _panelX;
         private double _panelY;
         #endregion
+        #region Commands
+        ICommand placeCoin;
+        public ICommand PlaceCoin
+        {
+            get
+            {
+                return placeCoin;
+            }
+        }
+        #endregion
         public ConnectFourVM()
         {
             model = new ConnectFourM();
@@ -69,7 +80,19 @@ namespace ConnectFourAI.ViewModel
                 }
                 CircleItems.Add(circleItem);
             }
+            placeCoin = new RelayCommand()
+            {
+                CanExecuteDelegate = x => true,
+                ExecuteDelegate = x =>
+                {
+                    ConvertMousePositionToArrayIndex();
+                }
+            };
+        }
 
+        void ConvertMousePositionToArrayIndex()
+        {
+            throw new NotImplementedException();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

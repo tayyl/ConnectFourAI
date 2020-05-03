@@ -63,6 +63,7 @@
     </ApplicationDefinition>
     <Compile Include="ViewModel\ConnectFourVM.cs" />
     <Compile Include="ViewModel\MouseBehaviour.cs" />
+    <Compile Include="ViewModel\RelayCommand.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
