@@ -25,7 +25,7 @@ namespace ConnectFourAI.Model
 
         public bool PlaceCoin(int column, BoardCellState player)
         {
-            for(byte i=0; i<gameBoard.GetLength(0); i++)
+            for(int  i= gameBoard.GetLength(0)-1; i>-1; i--)
             {
                 if (gameBoard[i, column] == (byte)BoardCellState.Empty)
                 {

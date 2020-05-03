@@ -87,9 +87,11 @@ namespace ConnectFourAI.ViewModel
                 ExecuteDelegate = x =>
                 {
                     int[] mouseXY=ConvertMousePositionToArrayIndex(_panelX,_panelY);
-                    model.PlaceCoin(mouseXY[1], model.CurrentPlayer);
-                    model.CheckIfWin(model.CurrentPlayer);
-                    model.ChangePlayer();
+                    if (model.PlaceCoin(mouseXY[1], model.CurrentPlayer))
+                    {
+                        model.CheckIfWin(model.CurrentPlayer);
+                        model.ChangePlayer();
+                    }
                 }
             };
         }
