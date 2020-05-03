@@ -44,7 +44,7 @@ Title="MainWindow" Height="900" Width="900" ResizeMode="NoResize" SizeToContent=
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Ellipse Width="{Binding R}" Height="{Binding R}" Fill="AliceBlue" >
+                        <Ellipse Width="{Binding R}" Height="{Binding R}" Fill="{Binding Color}" >
                             <Ellipse.RenderTransform>
                                 <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
                             </Ellipse.RenderTransform>

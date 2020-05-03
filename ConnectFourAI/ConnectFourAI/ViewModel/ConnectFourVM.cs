@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media;
 using ConnectFourAI.Model;
 namespace ConnectFourAI.ViewModel
 {
@@ -14,6 +15,7 @@ namespace ConnectFourAI.ViewModel
         public int X { get; set; }
         public int Y { get; set; }
         public int R { get; set; }
+        public SolidColorBrush Color { get; set; }
     }
     public class ConnectFourVM : INotifyPropertyChanged
     {
@@ -70,6 +72,7 @@ namespace ConnectFourAI.ViewModel
                 circleItem.R = GameBoardWidth/model.GameBoard.GetLength(1)-10;
                 circleItem.X = columnIndex * circleItem.R + circleMarginLeftIndex*circleMargin;
                 circleItem.Y = rowIndex+circleMarginBottomIndex*circleMargin;
+                circleItem.Color = new SolidColorBrush(Color.FromRgb(255, 255,255));
                 columnIndex++;
                 circleMarginLeftIndex++;
                 if (i % model.GameBoard.GetLength(1) == 0 && i!=0)
