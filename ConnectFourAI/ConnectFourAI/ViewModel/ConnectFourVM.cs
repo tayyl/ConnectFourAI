@@ -10,12 +10,70 @@ using System.Windows.Media;
 using ConnectFourAI.Model;
 namespace ConnectFourAI.ViewModel
 {
-    public class CircleItem
+    public class CircleItem : INotifyPropertyChanged
     {
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int R { get; set; }
-        public SolidColorBrush Color { get; set; }
+        int x;
+        int y;
+        int r;
+        SolidColorBrush color;
+        public int X { 
+            get 
+            {
+                return x;
+            }
+            set 
+            {
+                x = value;
+                OnPropertyChanged("X");
+            }
+            
+        }
+        public int Y
+        {
+            get
+            {
+                return y;
+            }
+            set
+            {
+                y = value;
+                OnPropertyChanged("Y");
+            }
+        }
+        public int R
+        {
+            get
+            {
+                return r;
+            }
+            set
+            {
+                r = value;
+                OnPropertyChanged("R");
+            }
+
+        }
+        public SolidColorBrush Color
+        {
+            get
+            {
+                return color;
+            }
+            set
+            {
+                color = value;
+                OnPropertyChanged("Color");
+            }
+
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            var handler = PropertyChanged;
+            handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
     public class ConnectFourVM : INotifyPropertyChanged
     {
@@ -94,6 +152,12 @@ namespace ConnectFourAI.ViewModel
                     {
                         model.CheckIfWin(model.CurrentPlayer);
                         model.ChangePlayer();
+                        int listIndex = mouseXY[1] * model.GameBoard.GetLength(1) + mouseXY[0]; 
+                        CircleItems[listIndex].Color=
+                            model.CurrentPlayer==BoardCellState.Player1 ?
+                                new SolidColorBrush(Color.FromRgb(150,0,0)) : 
+                                new SolidColorBrush(Color.FromRgb(0,150,0));
+                        OnPropertyChanged("CircleItems");
                     }
                 }
             };

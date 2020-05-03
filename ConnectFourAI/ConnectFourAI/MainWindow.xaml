@@ -14,16 +14,7 @@ Title="MainWindow" Height="900" Width="900" ResizeMode="NoResize" SizeToContent=
     </Window.DataContext>
     <StackPanel>
         <Canvas Width="890" Height="{Binding FirstPanelHeight}">
-            <Button RenderTransformOrigin="1,0" >
-                <Button.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="-236.976"/>
-                        <TranslateTransform X="-1.4131" Y="4.76687"/>
-                    </TransformGroup>
-                </Button.RenderTransform>
-            </Button>
+            
         </Canvas>
         <Canvas Width="{Binding GameBoardWidth}" Height="{Binding GameBoardHeight}" Background="#FF26BAFF" >
             <i:Interaction.Behaviors>
@@ -36,7 +27,7 @@ Title="MainWindow" Height="900" Width="900" ResizeMode="NoResize" SizeToContent=
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             
-            <ItemsControl ItemsSource="{Binding CircleItems}">
+            <ItemsControl ItemsSource="{Binding CircleItems, Mode=TwoWay}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas/>
@@ -44,7 +35,7 @@ Title="MainWindow" Height="900" Width="900" ResizeMode="NoResize" SizeToContent=
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Ellipse Width="{Binding R}" Height="{Binding R}" Fill="{Binding Color}" >
+                        <Ellipse Width="{Binding R}" Height="{Binding R}" Fill="{Binding Color, Mode=TwoWay}" >
                             <Ellipse.RenderTransform>
                                 <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
                             </Ellipse.RenderTransform>
