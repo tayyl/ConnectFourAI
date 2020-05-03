@@ -19,11 +19,11 @@ namespace ConnectFourAI.Model
         #endregion
         public ConnectFourM()
         {
-            gameBoard = new byte[7, 6];
+            gameBoard = new byte[6, 7];
             CurrentPlayer = BoardCellState.Player1;
         }
 
-        public bool PlaceCoin(byte column, BoardCellState player)
+        public bool PlaceCoin(int column, BoardCellState player)
         {
             for(byte i=0; i<gameBoard.GetLength(0); i++)
             {
@@ -97,7 +97,10 @@ namespace ConnectFourAI.Model
             }
             return false; 
         }
-
+        public void ChangePlayer()
+        {
+            CurrentPlayer = CurrentPlayer == BoardCellState.Player1 ? BoardCellState.Player2 : BoardCellState.Player1;
+        }
     }
     
 }

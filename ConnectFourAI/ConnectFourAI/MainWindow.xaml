@@ -13,7 +13,7 @@ Title="MainWindow" Height="900" Width="900" ResizeMode="NoResize" SizeToContent=
         <vm:ConnectFourVM />
     </Window.DataContext>
     <StackPanel>
-        <Canvas Width="890" Height="100">
+        <Canvas Width="890" Height="{Binding FirstPanelHeight}">
             <Button RenderTransformOrigin="1,0" >
                 <Button.RenderTransform>
                     <TransformGroup>

@@ -41,6 +41,7 @@ namespace ConnectFourAI.ViewModel
         public ObservableCollection<CircleItem> CircleItems { get; set; }
         public int GameBoardWidth { get; set; } = 890;
         public int GameBoardHeight { get; set; }  = 770;
+        public int FirstPanelHeight { get; set; } = 100;
         #endregion
         #region Variables
         ConnectFourM model;
@@ -66,14 +67,14 @@ namespace ConnectFourAI.ViewModel
             for(int i=1; i<model.GameBoard.GetLength(0)* model.GameBoard.GetLength(1)+1; i++)
             {              
                 CircleItem circleItem = new CircleItem();
-                circleItem.R = GameBoardWidth/model.GameBoard.GetLength(0)-10;
+                circleItem.R = GameBoardWidth/model.GameBoard.GetLength(1)-10;
                 circleItem.X = columnIndex * circleItem.R + circleMarginLeftIndex*circleMargin;
                 circleItem.Y = rowIndex+circleMarginBottomIndex*circleMargin;
                 columnIndex++;
                 circleMarginLeftIndex++;
-                if (i % model.GameBoard.GetLength(0) == 0 && i!=0)
+                if (i % model.GameBoard.GetLength(1) == 0 && i!=0)
                 {
-                    rowIndex += GameBoardWidth / model.GameBoard.GetLength(0) - 10;
+                    rowIndex += GameBoardWidth / model.GameBoard.GetLength(1) - 10;
                     columnIndex = 0;
                     circleMarginBottomIndex++;
                     circleMarginLeftIndex = 1;
@@ -85,14 +86,21 @@ namespace ConnectFourAI.ViewModel
                 CanExecuteDelegate = x => true,
                 ExecuteDelegate = x =>
                 {
-                    ConvertMousePositionToArrayIndex();
+                    int[] mouseXY=ConvertMousePositionToArrayIndex(_panelX,_panelY);
+                    model.PlaceCoin(mouseXY[1], model.CurrentPlayer);
+                    model.CheckIfWin(model.CurrentPlayer);
+                    model.ChangePlayer();
                 }
             };
         }
 
-        void ConvertMousePositionToArrayIndex()
+        int[] ConvertMousePositionToArrayIndex(double mouseX, double mouseY)
         {
-            throw new NotImplementedException();
+            int[] mouseXY = new int[2];
+
+            mouseXY[1] = Convert.ToInt32(Math.Floor(mouseX / ((GameBoardWidth / model.GameBoard.GetLength(1)))));
+            mouseXY[0] = Convert.ToInt32(Math.Floor(mouseY / ((GameBoardWidth / model.GameBoard.GetLength(1)))));
+            return mouseXY;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
