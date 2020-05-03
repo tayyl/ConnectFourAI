@@ -5,8 +5,38 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ConnectFourAI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="900" Width="900">
+        xmlns:vm="clr-namespace:ConnectFourAI.ViewModel"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+
+Title="MainWindow" Height="900" Width="900" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
+    <Window.DataContext>
+        <vm:ConnectFourVM />
+    </Window.DataContext>
     <StackPanel>
-        
+        <Canvas Width="890" Height="100">
+            
+        </Canvas>
+        <Canvas Width="{Binding GameBoardWidth}" Height="{Binding GameBoardHeight}" Background="#FF26BAFF" >
+            <i:Interaction.Behaviors>
+                <vm:MouseBehaviour MouseX="{Binding PanelX, Mode=OneWayToSource}"
+                                          MouseY="{Binding PanelY, Mode=OneWayToSource}" />
+            </i:Interaction.Behaviors>
+            <ItemsControl ItemsSource="{Binding CircleItems}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Ellipse Width="{Binding R}" Height="{Binding R}" Fill="AliceBlue">
+                            <Ellipse.RenderTransform>
+                                <TranslateTransform X="{Binding X}" Y="{Binding Y}"/>
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Canvas>
     </StackPanel>
 </Window>

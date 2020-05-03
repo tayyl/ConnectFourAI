@@ -11,7 +11,7 @@ namespace ConnectFourAI.Model
     {
         #region Attributes
         public BoardCellState CurrentPlayer { get; set; }
-        public byte[,] GameBoard { get => gameBoard}
+        public byte[,] GameBoard { get => gameBoard; }
         #endregion
 
         #region Variables
