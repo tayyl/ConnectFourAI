@@ -23,13 +23,15 @@ namespace ConnectFourAI.Model
             CurrentPlayer = BoardCellState.Player1;
         }
 
-        public bool PlaceCoin(int column, BoardCellState player)
+        public bool PlaceCoin(int column, BoardCellState player, ref int[] placedCoin)
         {
             for(int  i= gameBoard.GetLength(0)-1; i>-1; i--)
             {
                 if (gameBoard[i, column] == (byte)BoardCellState.Empty)
                 {
                     gameBoard[i, column] = (byte)player;
+                    placedCoin[0] = i;
+                    placedCoin[1] = column;
                     return true;
                 }
             }

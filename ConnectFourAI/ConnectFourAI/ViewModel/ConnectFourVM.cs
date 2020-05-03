@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using ConnectFourAI.Model;
@@ -147,17 +148,27 @@ namespace ConnectFourAI.ViewModel
                 CanExecuteDelegate = x => true,
                 ExecuteDelegate = x =>
                 {
+                    int[] placedCoin = new int[2];
                     int[] mouseXY=ConvertMousePositionToArrayIndex(_panelX,_panelY);
-                    if (model.PlaceCoin(mouseXY[1], model.CurrentPlayer))
+                    if (model.PlaceCoin(mouseXY[1], model.CurrentPlayer,ref placedCoin))
                     {
-                        model.CheckIfWin(model.CurrentPlayer);
-                        model.ChangePlayer();
-                        int listIndex = mouseXY[1] * model.GameBoard.GetLength(1) + mouseXY[0]; 
-                        CircleItems[listIndex].Color=
-                            model.CurrentPlayer==BoardCellState.Player1 ?
-                                new SolidColorBrush(Color.FromRgb(150,0,0)) : 
-                                new SolidColorBrush(Color.FromRgb(0,150,0));
+                        int listIndex = placedCoin[1] + placedCoin[0] * model.GameBoard.GetLength(1);
+                            CircleItems[listIndex].Color =
+                                model.CurrentPlayer == BoardCellState.Player1 ?
+                                    new SolidColorBrush(Color.FromRgb(150, 0, 0)) :
+                                    new SolidColorBrush(Color.FromRgb(0, 150, 0));
                         OnPropertyChanged("CircleItems");
+                        if (model.CheckIfWin(model.CurrentPlayer))
+                        {
+                            MessageBox.Show("Zwyciężył gracz o kolorze "
+                                + (BoardCellState.Player1 == model.CurrentPlayer ?
+                                 "czerwonym!" :
+                                 "zielonym!")
+                                );
+                        }
+                        model.ChangePlayer();
+
+
                     }
                 }
             };
