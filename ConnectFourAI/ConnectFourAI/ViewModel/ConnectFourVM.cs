@@ -167,8 +167,6 @@ namespace ConnectFourAI.ViewModel
                                 );
                         }
                         model.ChangePlayer();
-
-
                     }
                 }
             };
