@@ -217,7 +217,7 @@ namespace ConnectFourAI.Model
             foreach(int col in validLocations)
             {
                 int row = getNextOpenRow(board,col);
-                byte[,] tmpBoard = (byte[,])gameBoard.Clone();
+                byte[,] tmpBoard = (byte[,])board.Clone();
                 CheckIfWin(tmpBoard, player);
                 int score = scorePosition(tmpBoard, player);
                 if (score > bestScore)
@@ -234,6 +234,83 @@ namespace ConnectFourAI.Model
                 if (board[i, col] == (byte)BoardCellState.Empty)
                     return i;
             return 0;
+        }
+        int minmax(byte[,] board, int depth, int alpha, int beta, bool maximizingPlayer, ref int value)
+        {
+            Random rand = new Random();
+            int column = -1,row=-1;
+            int[] placedCoin=new int[2];
+            int[] validLocations = getValidLocations(board);
+            bool isTerminal = isTerminalNode(board);
+            int newScore = 0;
+            if(depth==0 || isTerminal)
+            {
+                if (isTerminal)
+                {
+                    if (CheckIfWin(board, BoardCellState.Player2))
+                    {
+                        value = int.MaxValue;
+                        return -1;
+                    }
+                    else if (CheckIfWin(board, BoardCellState.Player1))
+                    {
+                        value = int.MinValue;
+                        return -1;
+                    }
+                    else
+                    {
+                        value = 0;
+                        return -1;
+                    }                        
+                }
+                else
+                {
+                    value = scorePosition(board, BoardCellState.Player2);
+                    return -1;
+                }
+            }
+            if (maximizingPlayer)
+            {
+                value = int.MinValue;
+                column = validLocations[rand.Next(-1, validLocations.Length)];
+                foreach(int i in validLocations)
+                {
+                    row = getNextOpenRow(board, i);
+                    byte[,] tmpBoard = (byte[,])board.Clone();
+                    PlaceCoin(column, BoardCellState.Player2, ref placedCoin);
+                    newScore = minmax(tmpBoard, depth - 1, alpha, beta, false, ref value);
+                    if (newScore > value)
+                    {
+                        value = newScore;
+                        column = i;
+                    }
+                    alpha = Math.Max(alpha, value);
+                    if (alpha >= beta)
+                        break;
+                }
+                return value;
+            }
+            else
+            {
+                value = int.MinValue;
+                column = validLocations[rand.Next(-1, validLocations.Length)];
+                foreach (int i in validLocations)
+                {
+                    row = getNextOpenRow(board, i);
+                    byte[,] tmpBoard = (byte[,])board.Clone();
+                    PlaceCoin(column, BoardCellState.Player1, ref placedCoin);
+                    newScore = minmax(tmpBoard, depth - 1, alpha, beta, true, ref value);
+                    if (newScore < value)
+                    {
+                        value = newScore;
+                        column = i;
+                    }
+                    beta = Math.Min(beta, value);
+                    if (alpha >= beta)
+                        break;
+                }
+                return value;
+            }
         }
         #endregion
     }
