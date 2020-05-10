@@ -193,7 +193,7 @@ namespace ConnectFourAI.Model
         }
         bool isTerminalNode()
         {
-            return CheckIfWin(BoardCellState.Player1) || CheckIfWin(BoardCellState.Player2) || getValidLocations.Length == 0;
+            return CheckIfWin(BoardCellState.Player1) || CheckIfWin(BoardCellState.Player2) || getValidLocations().Length == 0;
         }
 
         int[] getValidLocations()
