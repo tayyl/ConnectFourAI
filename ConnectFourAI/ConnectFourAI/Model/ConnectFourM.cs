@@ -37,7 +37,7 @@ namespace ConnectFourAI.Model
             }
             return false;
         }
-        public bool CheckIfWin(BoardCellState player)
+        public bool CheckIfWin(byte[,] board,BoardCellState player)
         {
             #region Rules description
             /*
@@ -63,35 +63,35 @@ namespace ConnectFourAI.Model
              */
             #endregion
 
-            int HEIGHT = gameBoard.GetLength(0);
-            int WIDTH = gameBoard.GetLength(1);
+            int HEIGHT = board.GetLength(0);
+            int WIDTH = board.GetLength(1);
 
             for (int i = 0; i < HEIGHT; i++)
             { // iterate rows, bottom to top
                 for (int j = 0; j < WIDTH; j++)
                 { // iterate columns, left to right
-                    if (gameBoard[i, j] == (byte)player)
+                    if (board[i, j] == (byte)player)
                     {
                         if (j + 3 < WIDTH &&
-                            (byte)player == gameBoard[i, j + 1] && // look right
-                            (byte)player == gameBoard[i, j + 2] &&
-                            (byte)player == gameBoard[i, j + 3])
+                            (byte)player == board[i, j + 1] && // look right
+                            (byte)player == board[i, j + 2] &&
+                            (byte)player == board[i, j + 3])
                             return true;
                         if (i + 3 < HEIGHT)
                         {
-                            if ((byte)player == gameBoard[i + 1, j] && // look up
-                                (byte)player == gameBoard[i + 2, j] &&
-                                (byte)player == gameBoard[i + 3, j])
+                            if ((byte)player == board[i + 1, j] && // look up
+                                (byte)player == board[i + 2, j] &&
+                                (byte)player == board[i + 3, j])
                                 return true;
                             if (j + 3 < WIDTH &&
-                                (byte)player == gameBoard[i + 1, j + 1] && // look up & right
-                                (byte)player == gameBoard[i + 2, j + 2] &&
-                                (byte)player == gameBoard[i + 3, j + 3])
+                                (byte)player == board[i + 1, j + 1] && // look up & right
+                                (byte)player == board[i + 2, j + 2] &&
+                                (byte)player == board[i + 3, j + 3])
                                 return true;
                             if (j - 3 >= 0 &&
-                                (byte)player == gameBoard[i + 1, j - 1] && // look up & left
-                                (byte)player == gameBoard[i + 2, j - 2] &&
-                                (byte)player == gameBoard[i + 3, j - 3])
+                                (byte)player == board[i + 1, j - 1] && // look up & left
+                                (byte)player == board[i + 2, j - 2] &&
+                                (byte)player == board[i + 3, j - 3])
                                 return true;
                         }
                     }
@@ -133,57 +133,57 @@ namespace ConnectFourAI.Model
 
             return score;
         }
-        int scorePosition(BoardCellState player)
+        int scorePosition(byte[,] board,BoardCellState player)
         {
             int score = 0;
             List<byte> window = new List<byte>();
             //Score center column
             int centerArrayCounter=0;
-            for (int i = 0; i < gameBoard.GetLength(0); i++)
-                if (gameBoard[i, gameBoard.GetLength(1) / 2 + 1] == (byte)player)
+            for (int i = 0; i < board.GetLength(0); i++)
+                if (board[i, board.GetLength(1) / 2 + 1] == (byte)player)
                     centerArrayCounter++;
             score += centerArrayCounter * 3;
 
             //Score Horizontal
-            for(int i=0; i < gameBoard.GetLength(0); i++)
+            for(int i=0; i < board.GetLength(0); i++)
             {
-                for(int j=0; j<gameBoard.GetLength(1)-3; j++)
+                for(int j=0; j<board.GetLength(1)-3; j++)
                 {
                     for (int c = j; c <= j + window.Count(); c++)
-                        window.Add(gameBoard[i, c]);
+                        window.Add(board[i, c]);
                     score += evaluate(window.ToArray(), player);
                     window.Clear();
                 }
             }
             //Score Vertical
-            for (int i = 0; i < gameBoard.GetLength(1); i++)
+            for (int i = 0; i < board.GetLength(1); i++)
             {
-                for (int j = 0; j < gameBoard.GetLength(0) - 3; j++)
+                for (int j = 0; j < board.GetLength(0) - 3; j++)
                 {
                     for (int c = j; c <= j + window.Count(); c++)
-                        window.Add(gameBoard[c, i]);
+                        window.Add(board[c, i]);
                     score += evaluate(window.ToArray(), player);
                     window.Clear();
                 }
             }
             //Score positive sloped diagonal
-            for (int i = 0; i < gameBoard.GetLength(0)-3; i++)
+            for (int i = 0; i < board.GetLength(0)-3; i++)
             {
-                for (int j = 0; j < gameBoard.GetLength(1) - 3; j++)
+                for (int j = 0; j < board.GetLength(1) - 3; j++)
                 {
                     for (int c = 0; c <= window.Count(); c++)
-                        window.Add(gameBoard[i+c, j+c]);
+                        window.Add(board[i+c, j+c]);
                     score += evaluate(window.ToArray(), player);
                     window.Clear();
                 }
             }
             //Score negative sloped diagonal
-            for (int i = 0; i < gameBoard.GetLength(0) - 3; i++)
+            for (int i = 0; i < board.GetLength(0) - 3; i++)
             {
-                for (int j = 0; j < gameBoard.GetLength(1) - 3; j++)
+                for (int j = 0; j < board.GetLength(1) - 3; j++)
                 {
                     for (int c = 0; c <= window.Count(); c++)
-                        window.Add(gameBoard[i +3 - c, j + c]);
+                        window.Add(board[i +3 - c, j + c]);
                     score += evaluate(window.ToArray(), player);
                     window.Clear();
                 }
@@ -191,12 +191,12 @@ namespace ConnectFourAI.Model
 
             return score;
         }
-        bool isTerminalNode()
+        bool isTerminalNode(byte[,] board)
         {
-            return CheckIfWin(BoardCellState.Player1) || CheckIfWin(BoardCellState.Player2) || getValidLocations().Length == 0;
+            return CheckIfWin(board, BoardCellState.Player1) || CheckIfWin(board, BoardCellState.Player2) || getValidLocations(board).Length == 0;
         }
 
-        int[] getValidLocations()
+        int[] getValidLocations(byte[,] board)
         {
             List<int> validLocations=new List<int>();
             for (int i = 0; i < gameBoard.GetLength(1); i++)
@@ -207,6 +207,33 @@ namespace ConnectFourAI.Model
         bool isValidLocation(int col)
         {
             return gameBoard[gameBoard.GetLength(0) - 1, col] == 0;
+        }
+        int pickBestMove(byte[,] board, BoardCellState player)
+        {
+            Random rand = new Random();
+            int[] validLocations = getValidLocations(board);
+            int bestScore = -10000;
+            int bestCol = validLocations[rand.Next(-1, validLocations.Length)];
+            foreach(int col in validLocations)
+            {
+                int row = getNextOpenRow(board,col);
+                byte[,] tmpBoard = (byte[,])gameBoard.Clone();
+                CheckIfWin(tmpBoard, player);
+                int score = scorePosition(tmpBoard, player);
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestCol = col;
+                }
+            }
+            return bestCol;
+        }
+        int getNextOpenRow(byte[,] board,int col)
+        {
+            for (int i = 0; i < board.GetLength(0); i++)
+                if (board[i, col] == (byte)BoardCellState.Empty)
+                    return i;
+            return 0;
         }
         #endregion
     }
