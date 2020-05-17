@@ -11,6 +11,8 @@ using System.Windows.Media;
 using ConnectFourAI.Model;
 namespace ConnectFourAI.ViewModel
 {
+    enum Mode { PvP=0,PvC=1,CvC=2}
+    enum Difficulty { Easy=3,Medium=6,Hard=9}
     public class CircleItem : INotifyPropertyChanged
     {
         int x;
@@ -103,8 +105,11 @@ namespace ConnectFourAI.ViewModel
         public int GameBoardWidth { get; set; } = 890;
         public int GameBoardHeight { get; set; }  = 770;
         public int FirstPanelHeight { get; set; } = 100;
+        public int ModeSelection { get; set; }
         #endregion
         #region Variables
+        Mode mode = Mode.PvP;
+        Difficulty difficulty = Difficulty.Medium;
         ConnectFourM model;
         int rowIndex = 0, columnIndex = 0, circleMarginBottomIndex = 1, circleMarginLeftIndex = 1;
         int circleMargin = 9;
@@ -118,6 +123,56 @@ namespace ConnectFourAI.ViewModel
             get
             {
                 return placeCoin;
+            }
+        }
+        ICommand pvp;
+        public ICommand Pvp
+        {
+            get
+            {
+                return pvp;
+            }
+        }
+        ICommand pvc;
+        public ICommand Pvc
+        {
+            get
+            {
+                return pvc;
+            }
+        }
+        ICommand cvc;
+        public ICommand Cvc
+        {
+            get
+            {
+                return cvc;
+            }
+        }
+
+        ICommand easy;
+        public ICommand Easy
+        {
+            get
+            {
+                return easy;
+            }
+        }
+
+        ICommand medium;
+        public ICommand Medium
+        {
+            get
+            {
+                return medium;
+            }
+        }
+        ICommand hard;
+        public ICommand Hard
+        {
+            get
+            {
+                return hard;
             }
         }
         #endregion
@@ -143,6 +198,55 @@ namespace ConnectFourAI.ViewModel
                 }
                 CircleItems.Add(circleItem);
             }
+
+            pvp = new RelayCommand()
+            {
+                CanExecuteDelegate = x => true,
+                ExecuteDelegate = x =>
+                {
+                    mode = Mode.PvP;
+                }
+            };
+            pvc = new RelayCommand()
+            {
+                CanExecuteDelegate = x => true,
+                ExecuteDelegate = x =>
+                {
+                    mode = Mode.PvC;
+                }
+            };
+            cvc = new RelayCommand()
+            {
+                CanExecuteDelegate = x => true,
+                ExecuteDelegate = x =>
+                {
+                    mode = Mode.CvC;
+                }
+            };
+            easy = new RelayCommand()
+            {
+                CanExecuteDelegate = x => mode != Mode.PvP,
+                ExecuteDelegate = x =>
+                {
+                    difficulty= Difficulty.Easy;
+                }
+            };
+            medium = new RelayCommand()
+            {
+                CanExecuteDelegate = x => mode != Mode.PvP,
+                ExecuteDelegate = x =>
+                {
+                    difficulty = Difficulty.Medium;
+                }
+            };
+            hard = new RelayCommand()
+            {
+                CanExecuteDelegate = x => mode!=Mode.PvP,
+                ExecuteDelegate = x =>
+                {
+                    difficulty = Difficulty.Hard;
+                }
+            };
             placeCoin = new RelayCommand()
             {
                 CanExecuteDelegate = x => true,
@@ -150,24 +254,74 @@ namespace ConnectFourAI.ViewModel
                 {
                     int[] placedCoin = new int[2];
                     int[] mouseXY=ConvertMousePositionToArrayIndex(_panelX,_panelY);
-                    if (model.PlaceCoin(mouseXY[1], model.CurrentPlayer,ref placedCoin))
+                    switch (mode)
                     {
-                        int listIndex = placedCoin[1] + placedCoin[0] * model.GameBoard.GetLength(1);
-                            CircleItems[listIndex].Color =
-                                model.CurrentPlayer == BoardCellState.Player1 ?
-                                    new SolidColorBrush(Color.FromRgb(150, 0, 0)) :
-                                    new SolidColorBrush(Color.FromRgb(0, 150, 0));
-                        OnPropertyChanged("CircleItems");
-                        if (model.CheckIfWin(model.CurrentPlayer))
-                        {
-                            MessageBox.Show("Zwyciężył gracz o kolorze "
-                                + (BoardCellState.Player1 == model.CurrentPlayer ?
-                                 "czerwonym!" :
-                                 "zielonym!")
-                                );
-                        }
-                        model.ChangePlayer();
+                        case Mode.CvC:
+                            break;
+                        case Mode.PvP:
+                            if (model.PlaceCoin(model.GameBoard, mouseXY[1], model.CurrentPlayer, ref placedCoin))
+                            {
+                                int listIndex = placedCoin[1] + placedCoin[0] * model.GameBoard.GetLength(1);
+                                CircleItems[listIndex].Color =
+                                    model.CurrentPlayer == BoardCellState.Player1 ?
+                                        new SolidColorBrush(Color.FromRgb(150, 0, 0)) :
+                                        new SolidColorBrush(Color.FromRgb(0, 150, 0));
+                                OnPropertyChanged("CircleItems");
+                                if (model.CheckIfWin(model.GameBoard, model.CurrentPlayer))
+                                {
+                                    MessageBox.Show("Zwyciężył gracz o kolorze "
+                                        + (BoardCellState.Player1 == model.CurrentPlayer ?
+                                         "czerwonym!" :
+                                         "zielonym!")
+                                        );
+                                }
+                                model.ChangePlayer();
+                            }
+                            break;
+                        case Mode.PvC:
+                            if (model.PlaceCoin(model.GameBoard, mouseXY[1], model.CurrentPlayer, ref placedCoin))
+                            {
+                                int listIndex = placedCoin[1] + placedCoin[0] * model.GameBoard.GetLength(1);
+                                CircleItems[listIndex].Color =
+                                    model.CurrentPlayer == BoardCellState.Player1 ?
+                                        new SolidColorBrush(Color.FromRgb(150, 0, 0)) :
+                                        new SolidColorBrush(Color.FromRgb(0, 150, 0));
+                                OnPropertyChanged("CircleItems");
+                                if (model.CheckIfWin(model.GameBoard, model.CurrentPlayer))
+                                {
+                                    MessageBox.Show("Zwyciężył gracz o kolorze "
+                                        + (BoardCellState.Player1 == model.CurrentPlayer ?
+                                         "czerwonym!" :
+                                         "zielonym!")
+                                        );
+                                }
+                                model.ChangePlayer();
+
+                                ColumnScore columnScore = model.Minmax(model.GameBoard, (int)difficulty, int.MinValue, int.MaxValue, true);
+                                if (model.PlaceCoin(model.GameBoard, columnScore.Column, model.CurrentPlayer, ref placedCoin))
+                                {
+                                    listIndex = placedCoin[1] + placedCoin[0] * model.GameBoard.GetLength(1);
+                                    CircleItems[listIndex].Color =
+                                        model.CurrentPlayer == BoardCellState.Player1 ?
+                                            new SolidColorBrush(Color.FromRgb(150, 0, 0)) :
+                                            new SolidColorBrush(Color.FromRgb(0, 150, 0));
+                                    OnPropertyChanged("CircleItems");
+                                    if (model.CheckIfWin(model.GameBoard, model.CurrentPlayer))
+                                    {
+                                        MessageBox.Show("Zwyciężył gracz o kolorze "
+                                            + (BoardCellState.Player1 == model.CurrentPlayer ?
+                                             "czerwonym!" :
+                                             "zielonym!")
+                                            );
+                                    }
+                                }
+                                model.ChangePlayer();
+
+
+                            }
+                            break;
                     }
+                    
                 }
             };
         }

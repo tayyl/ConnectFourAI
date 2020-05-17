@@ -7,6 +7,16 @@ using System.Threading.Tasks;
 namespace ConnectFourAI.Model
 {
     public enum BoardCellState   { Empty=0,Player1=1,Player2=2}
+    public class ColumnScore
+    {
+        public int Column { get; set; }
+        public int Score { get; set; }
+        public ColumnScore(int column, int score)
+        {
+            Column = column;
+            Score = score;
+        }
+    }
     public class ConnectFourM
     {
         #region Attributes
@@ -23,13 +33,13 @@ namespace ConnectFourAI.Model
             CurrentPlayer = BoardCellState.Player1;
         }
 
-        public bool PlaceCoin(int column, BoardCellState player, ref int[] placedCoin)
+        public bool PlaceCoin(byte[,] board,int column, BoardCellState player, ref int[] placedCoin)
         {
-            for (int i = gameBoard.GetLength(0) - 1; i > -1; i--)
+            for (int i = board.GetLength(0) - 1; i > -1; i--)
             {
-                if (gameBoard[i, column] == (byte)BoardCellState.Empty)
+                if (board[i, column] == (byte)BoardCellState.Empty)
                 {
-                    gameBoard[i, column] = (byte)player;
+                    board[i, column] = (byte)player;
                     placedCoin[0] = i;
                     placedCoin[1] = column;
                     return true;
@@ -116,9 +126,9 @@ namespace ConnectFourAI.Model
             {
                 if (toCheck[i] == (int)player)
                     playerCoinCounter++;
-                if (toCheck[i] == (int)BoardCellState.Empty)
+                else if (toCheck[i] == (int)BoardCellState.Empty)
                     emptyCellCounter++;
-                if (toCheck[i] == (int)opponent)
+                else if (toCheck[i] == (int)opponent)
                     opponentCoinCounter++;
             }
 
@@ -135,7 +145,7 @@ namespace ConnectFourAI.Model
         }
         int scorePosition(byte[,] board,BoardCellState player)
         {
-            int score = 0;
+            int score = 0,windowLength=4;
             List<byte> window = new List<byte>();
             //Score center column
             int centerArrayCounter=0;
@@ -149,7 +159,7 @@ namespace ConnectFourAI.Model
             {
                 for(int j=0; j<board.GetLength(1)-3; j++)
                 {
-                    for (int c = j; c <= j + window.Count(); c++)
+                    for (int c = j; c < j +windowLength; c++)
                         window.Add(board[i, c]);
                     score += evaluate(window.ToArray(), player);
                     window.Clear();
@@ -160,7 +170,7 @@ namespace ConnectFourAI.Model
             {
                 for (int j = 0; j < board.GetLength(0) - 3; j++)
                 {
-                    for (int c = j; c <= j + window.Count(); c++)
+                    for (int c = j; c < j + windowLength; c++)
                         window.Add(board[c, i]);
                     score += evaluate(window.ToArray(), player);
                     window.Clear();
@@ -171,7 +181,7 @@ namespace ConnectFourAI.Model
             {
                 for (int j = 0; j < board.GetLength(1) - 3; j++)
                 {
-                    for (int c = 0; c <= window.Count(); c++)
+                    for (int c = 0; c < windowLength; c++)
                         window.Add(board[i+c, j+c]);
                     score += evaluate(window.ToArray(), player);
                     window.Clear();
@@ -182,8 +192,8 @@ namespace ConnectFourAI.Model
             {
                 for (int j = 0; j < board.GetLength(1) - 3; j++)
                 {
-                    for (int c = 0; c <= window.Count(); c++)
-                        window.Add(board[i +3 - c, j + c]);
+                    for (int c = 0; c < windowLength; c++)
+                        window.Add(board[i +3- c, j + c]);
                     score += evaluate(window.ToArray(), player);
                     window.Clear();
                 }
@@ -195,7 +205,6 @@ namespace ConnectFourAI.Model
         {
             return CheckIfWin(board, BoardCellState.Player1) || CheckIfWin(board, BoardCellState.Player2) || getValidLocations(board).Length == 0;
         }
-
         int[] getValidLocations(byte[,] board)
         {
             List<int> validLocations=new List<int>();
@@ -206,39 +215,11 @@ namespace ConnectFourAI.Model
         }
         bool isValidLocation(int col)
         {
-            return gameBoard[gameBoard.GetLength(0) - 1, col] == 0;
+            return gameBoard[0, col] == (int)BoardCellState.Empty;
         }
-        int pickBestMove(byte[,] board, BoardCellState player)
+        public ColumnScore Minmax(byte[,] board, int depth, int alpha, int beta, bool maximizingPlayer)
         {
-            Random rand = new Random();
-            int[] validLocations = getValidLocations(board);
-            int bestScore = -10000;
-            int bestCol = validLocations[rand.Next(-1, validLocations.Length)];
-            foreach(int col in validLocations)
-            {
-                int row = getNextOpenRow(board,col);
-                byte[,] tmpBoard = (byte[,])board.Clone();
-                CheckIfWin(tmpBoard, player);
-                int score = scorePosition(tmpBoard, player);
-                if (score > bestScore)
-                {
-                    bestScore = score;
-                    bestCol = col;
-                }
-            }
-            return bestCol;
-        }
-        int getNextOpenRow(byte[,] board,int col)
-        {
-            for (int i = 0; i < board.GetLength(0); i++)
-                if (board[i, col] == (byte)BoardCellState.Empty)
-                    return i;
-            return 0;
-        }
-        int minmax(byte[,] board, int depth, int alpha, int beta, bool maximizingPlayer, ref int value)
-        {
-            Random rand = new Random();
-            int column = -1,row=-1;
+            int column = -1,value=0;
             int[] placedCoin=new int[2];
             int[] validLocations = getValidLocations(board);
             bool isTerminal = isTerminalNode(board);
@@ -249,67 +230,63 @@ namespace ConnectFourAI.Model
                 {
                     if (CheckIfWin(board, BoardCellState.Player2))
                     {
-                        value = int.MaxValue;
-                        return -1;
+                        return new ColumnScore(-1,int.MaxValue);
                     }
                     else if (CheckIfWin(board, BoardCellState.Player1))
                     {
-                        value = int.MinValue;
-                        return -1;
+                        return new ColumnScore(-1, int.MinValue);
+
                     }
                     else
                     {
-                        value = 0;
-                        return -1;
-                    }                        
+                        return new ColumnScore(-1, 0);
+                    }
                 }
                 else
                 {
-                    value = scorePosition(board, BoardCellState.Player2);
-                    return -1;
+                    return new ColumnScore(-1, scorePosition(board, BoardCellState.Player2));
+
                 }
             }
             if (maximizingPlayer)
             {
                 value = int.MinValue;
-                column = validLocations[rand.Next(-1, validLocations.Length)];
-                foreach(int i in validLocations)
+                column = validLocations[0];
+                foreach(int col in validLocations)
                 {
-                    row = getNextOpenRow(board, i);
                     byte[,] tmpBoard = (byte[,])board.Clone();
-                    PlaceCoin(column, BoardCellState.Player2, ref placedCoin);
-                    newScore = minmax(tmpBoard, depth - 1, alpha, beta, false, ref value);
+                    PlaceCoin(tmpBoard,col, BoardCellState.Player2, ref placedCoin);
+                    newScore= Minmax(tmpBoard, depth - 1, alpha, beta, false).Score;
                     if (newScore > value)
                     {
                         value = newScore;
-                        column = i;
+                        column = col;
                     }
                     alpha = Math.Max(alpha, value);
                     if (alpha >= beta)
                         break;
                 }
-                return value;
+                return new ColumnScore(column, value);
             }
             else
             {
                 value = int.MinValue;
-                column = validLocations[rand.Next(-1, validLocations.Length)];
-                foreach (int i in validLocations)
+                column = validLocations[0];
+                foreach (int col in validLocations)
                 {
-                    row = getNextOpenRow(board, i);
                     byte[,] tmpBoard = (byte[,])board.Clone();
-                    PlaceCoin(column, BoardCellState.Player1, ref placedCoin);
-                    newScore = minmax(tmpBoard, depth - 1, alpha, beta, true, ref value);
+                    PlaceCoin(tmpBoard,col, BoardCellState.Player1, ref placedCoin);
+                    newScore= Minmax(tmpBoard, depth - 1, alpha, beta, true).Score;
                     if (newScore < value)
                     {
                         value = newScore;
-                        column = i;
+                        column = col;
                     }
                     beta = Math.Min(beta, value);
                     if (alpha >= beta)
                         break;
                 }
-                return value;
+                return new ColumnScore(column,value);
             }
         }
         #endregion
