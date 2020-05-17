@@ -278,6 +278,34 @@ namespace ConnectFourAI.ViewModel
                     switch (mode)
                     {
                         case Mode.CvC:
+                            Task task1 = Task.Factory.StartNew(()=>{
+                                do
+                                {
+                                    aiMove = true;
+                                    ColumnScore columnScore;
+                                    do
+                                    {
+                                        columnScore = model.Minmax(model.GameBoard, (int)difficulty, int.MinValue, int.MaxValue, true);
+                                        if (model.PlaceCoin(model.GameBoard, columnScore.Column, model.CurrentPlayer, ref placedCoin))
+                                        {
+                                            Turn(placedCoin);
+                                            break;
+                                        }
+                                    } while (true);
+
+                                    System.Threading.Thread.Sleep(100);
+                                    do
+                                    {
+                                        columnScore = model.Minmax(model.GameBoard, (int)difficulty, int.MinValue, int.MaxValue, true);
+                                        if (model.PlaceCoin(model.GameBoard, columnScore.Column, model.CurrentPlayer, ref placedCoin))
+                                        {
+                                            Turn(placedCoin);
+                                            break;
+                                        }
+                                    } while (true);
+                                    System.Threading.Thread.Sleep(100);
+                                } while (true);
+                            });
                             break;
                         case Mode.PvP:
                             if (model.PlaceCoin(model.GameBoard, mouseXY[1], model.CurrentPlayer, ref placedCoin))
@@ -288,7 +316,7 @@ namespace ConnectFourAI.ViewModel
                         case Mode.PvC:
                             if (model.PlaceCoin(model.GameBoard, mouseXY[1], model.CurrentPlayer, ref placedCoin))
                             {
-                                Task task = Task.Factory.StartNew(() => {
+                                Task task2 = Task.Factory.StartNew(() => {
 
                                     Turn(placedCoin);
                                     aiMove = true;
@@ -299,7 +327,7 @@ namespace ConnectFourAI.ViewModel
                                         Turn(placedCoin);
                                     }
                                 });
-                                task.ContinueWith(xc => { aiMove= false; });
+                                task2.ContinueWith(xc => { aiMove= false; });
                             }
                             break;
                     }
@@ -323,6 +351,10 @@ namespace ConnectFourAI.ViewModel
                 OnPropertyChanged("CircleItems");
             if (model.CheckIfWin(model.GameBoard, model.CurrentPlayer))
             {
+                foreach(int[] winningElement in model.WinningSequence)
+                {
+                        CircleItems[winningElement[1] + winningElement[0] * model.GameBoard.GetLength(1)].Color = new SolidColorBrush(Color.FromRgb(150, 0, 150));
+                }
                 MessageBox.Show("Zwyciężył gracz o kolorze "
                     + (BoardCellState.Player1 == model.CurrentPlayer ?
                      "czerwonym!" :

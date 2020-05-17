@@ -22,6 +22,7 @@ namespace ConnectFourAI.Model
         #region Attributes
         public BoardCellState CurrentPlayer { get; set; }
         public byte[,] GameBoard { get => gameBoard; }
+        public List<int[]> WinningSequence { get; set; }
         #endregion
 
         #region Variables
@@ -35,14 +36,17 @@ namespace ConnectFourAI.Model
 
         public bool PlaceCoin(byte[,] board,int column, BoardCellState player, ref int[] placedCoin)
         {
-            for (int i = board.GetLength(0) - 1; i > -1; i--)
+            if (column > -1)
             {
-                if (board[i, column] == (byte)BoardCellState.Empty)
+                for (int i = board.GetLength(0) - 1; i > -1; i--)
                 {
-                    board[i, column] = (byte)player;
-                    placedCoin[0] = i;
-                    placedCoin[1] = column;
-                    return true;
+                    if (board[i, column] == (byte)BoardCellState.Empty)
+                    {
+                        board[i, column] = (byte)player;
+                        placedCoin[0] = i;
+                        placedCoin[1] = column;
+                        return true;
+                    }
                 }
             }
             return false;
@@ -86,23 +90,62 @@ namespace ConnectFourAI.Model
                             (byte)player == board[i, j + 1] && // look right
                             (byte)player == board[i, j + 2] &&
                             (byte)player == board[i, j + 3])
+                        {
+                            WinningSequence = new List<int[]>()
+                            {
+                                new int[2]{i,j},
+                                new int[2]{i,j+1},
+                                new int[2]{i,j+2},
+                                new int[2]{i,j+3}
+                            };
                             return true;
+                        }
                         if (i + 3 < HEIGHT)
                         {
                             if ((byte)player == board[i + 1, j] && // look up
                                 (byte)player == board[i + 2, j] &&
                                 (byte)player == board[i + 3, j])
+                            {
+
+                                WinningSequence = new List<int[]>()
+                            {
+                                new int[2]{i,j},
+                                new int[2]{i+1,j},
+                                new int[2]{i+2,j},
+                                new int[2]{i+3,j}
+                            };
                                 return true;
+                            }
                             if (j + 3 < WIDTH &&
                                 (byte)player == board[i + 1, j + 1] && // look up & right
                                 (byte)player == board[i + 2, j + 2] &&
                                 (byte)player == board[i + 3, j + 3])
+                            {
+
+                                WinningSequence = new List<int[]>()
+                            {
+                                new int[2]{i,j},
+                                new int[2]{i+1,j+1},
+                                new int[2]{i+2,j+2},
+                                new int[2]{i+3,j+3}
+                            };
                                 return true;
+                            }
                             if (j - 3 >= 0 &&
                                 (byte)player == board[i + 1, j - 1] && // look up & left
                                 (byte)player == board[i + 2, j - 2] &&
                                 (byte)player == board[i + 3, j - 3])
+                            {
+
+                                WinningSequence = new List<int[]>()
+                            {
+                                new int[2]{i,j},
+                                new int[2]{i+1,j-1},
+                                new int[2]{i+2,j-2},
+                                new int[2]{i+3,j-3}
+                            };
                                 return true;
+                            }
                         }
                     }
                 }
