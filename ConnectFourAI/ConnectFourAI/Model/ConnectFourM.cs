@@ -150,7 +150,7 @@ namespace ConnectFourAI.Model
             //Score center column
             int centerArrayCounter=0;
             for (int i = 0; i < board.GetLength(0); i++)
-                if (board[i, board.GetLength(1) / 2 + 1] == (byte)player)
+                if (board[i, board.GetLength(1) / 2] == (byte)player)
                     centerArrayCounter++;
             score += centerArrayCounter * 3;
 
@@ -230,11 +230,11 @@ namespace ConnectFourAI.Model
                 {
                     if (CheckIfWin(board, BoardCellState.Player2))
                     {
-                        return new ColumnScore(-1,int.MaxValue);
+                        return new ColumnScore(-1,1000000);
                     }
                     else if (CheckIfWin(board, BoardCellState.Player1))
                     {
-                        return new ColumnScore(-1, int.MinValue);
+                        return new ColumnScore(-1, -1000000);
 
                     }
                     else
@@ -270,7 +270,7 @@ namespace ConnectFourAI.Model
             }
             else
             {
-                value = int.MinValue;
+                value = int.MaxValue;
                 column = validLocations[0];
                 foreach (int col in validLocations)
                 {
