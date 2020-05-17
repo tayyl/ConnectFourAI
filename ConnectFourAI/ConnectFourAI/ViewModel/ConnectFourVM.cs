@@ -353,7 +353,10 @@ namespace ConnectFourAI.ViewModel
             {
                 foreach(int[] winningElement in model.WinningSequence)
                 {
-                        CircleItems[winningElement[1] + winningElement[0] * model.GameBoard.GetLength(1)].Color = new SolidColorBrush(Color.FromRgb(150, 0, 150));
+                        CircleItems[winningElement[1] + winningElement[0] * model.GameBoard.GetLength(1)].Color =
+                        model.CurrentPlayer == BoardCellState.Player1 ?
+                            new SolidColorBrush(Color.FromRgb(200, 0, 0)) :
+                            new SolidColorBrush(Color.FromRgb(0, 200, 0));
                 }
                 MessageBox.Show("Zwyciężył gracz o kolorze "
                     + (BoardCellState.Player1 == model.CurrentPlayer ?
