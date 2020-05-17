@@ -81,6 +81,22 @@ namespace ConnectFourAI.ViewModel
     public class ConnectFourVM : INotifyPropertyChanged
     {
         #region Attributes
+        SolidColorBrush currentPlayerColor;
+        public SolidColorBrush CurrentPlayerColor {
+            get
+            {
+                return currentPlayerColor;
+            }
+            set
+            {
+                currentPlayerColor = value;
+                OnPropertyChanged("CurrentPlayerColor");
+            }
+        }
+        public double PanelXUpper
+        {
+            get { return PanelX-50; }
+        }
         public double PanelX
         {
             get { return _panelX; }
@@ -89,6 +105,7 @@ namespace ConnectFourAI.ViewModel
                 if (value.Equals(_panelX)) return;
                 _panelX = value;
                 OnPropertyChanged("PanelX");
+                OnPropertyChanged("PanelXUpper");
             }
         }
         public double PanelY
@@ -180,6 +197,9 @@ namespace ConnectFourAI.ViewModel
         public ConnectFourVM()
         {
             model = new ConnectFourM();
+            currentPlayerColor = model.CurrentPlayer == BoardCellState.Player1 ?
+                    new SolidColorBrush(Color.FromRgb(150, 0, 0)) :
+                    new SolidColorBrush(Color.FromRgb(0, 150, 0));
             CircleItems = new ObservableCollection<CircleItem>();
             for(int i=1; i<model.GameBoard.GetLength(0)* model.GameBoard.GetLength(1)+1; i++)
             {              
@@ -292,7 +312,10 @@ namespace ConnectFourAI.ViewModel
             App.Current.Dispatcher.BeginInvoke((Action)delegate
             {
                 int listIndex = placedCoin[1] + placedCoin[0] * model.GameBoard.GetLength(1);
-
+                CurrentPlayerColor =
+                model.CurrentPlayer != BoardCellState.Player1 ?
+                    new SolidColorBrush(Color.FromRgb(150, 0, 0)) :
+                    new SolidColorBrush(Color.FromRgb(0, 150, 0));
                 CircleItems[listIndex].Color =
                 model.CurrentPlayer == BoardCellState.Player1 ?
                     new SolidColorBrush(Color.FromRgb(150, 0, 0)) :

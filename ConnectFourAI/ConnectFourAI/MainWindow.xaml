@@ -28,7 +28,11 @@ Title="MainWindow" Height="910" Width="900" ResizeMode="NoResize" SizeToContent=
             </MenuItem>
         </Menu>
         <Canvas Width="890" Height="{Binding FirstPanelHeight}">
-            
+            <Ellipse Width="100" Height="100" Fill="{Binding CurrentPlayerColor}" >
+                <Ellipse.RenderTransform>
+                    <TranslateTransform X="{Binding PanelXUpper}" Y="0" />
+                </Ellipse.RenderTransform>
+            </Ellipse>
         </Canvas>
         <Canvas Width="{Binding GameBoardWidth}" Height="{Binding GameBoardHeight}" Background="#FF26BAFF" >
             <i:Interaction.Behaviors>
