@@ -108,6 +108,7 @@ namespace ConnectFourAI.ViewModel
         public int ModeSelection { get; set; }
         #endregion
         #region Variables
+        bool aiMove = false;
         Mode mode = Mode.PvP;
         Difficulty difficulty = Difficulty.Medium;
         ConnectFourM model;
@@ -249,7 +250,7 @@ namespace ConnectFourAI.ViewModel
             };
             placeCoin = new RelayCommand()
             {
-                CanExecuteDelegate = x => true,
+                CanExecuteDelegate = x => !aiMove,
                 ExecuteDelegate = x =>
                 {
                     int[] placedCoin = new int[2];
@@ -267,10 +268,10 @@ namespace ConnectFourAI.ViewModel
                         case Mode.PvC:
                             if (model.PlaceCoin(model.GameBoard, mouseXY[1], model.CurrentPlayer, ref placedCoin))
                             {
-                                Task.Factory.StartNew(() => {
+                                Task task = Task.Factory.StartNew(() => {
 
                                     Turn(placedCoin);
-
+                                    aiMove = true;
                                     ColumnScore columnScore;
                                     columnScore = model.Minmax(model.GameBoard, (int)difficulty, int.MinValue, int.MaxValue, true);
                                     if (model.PlaceCoin(model.GameBoard, columnScore.Column, model.CurrentPlayer, ref placedCoin))
@@ -278,6 +279,7 @@ namespace ConnectFourAI.ViewModel
                                         Turn(placedCoin);
                                     }
                                 });
+                                task.ContinueWith(xc => { aiMove= false; });
                             }
                             break;
                     }
