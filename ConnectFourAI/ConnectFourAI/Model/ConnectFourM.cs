@@ -262,11 +262,11 @@ namespace ConnectFourAI.Model
         }
         public ColumnScore Minmax(byte[,] board, int depth, int alpha, int beta, bool maximizingPlayer)
         {
-            int column = -1,value=0;
+            int column,value;
             int[] placedCoin=new int[2];
             int[] validLocations = getValidLocations(board);
             bool isTerminal = isTerminalNode(board);
-            int newScore = 0;
+            int newScore;
             if(depth==0 || isTerminal)
             {
                 if (isTerminal)

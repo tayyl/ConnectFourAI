@@ -17,14 +17,20 @@ Title="MainWindow" Height="910" Width="900" ResizeMode="NoResize" SizeToContent=
         <Menu>
             <MenuItem Header="Mode" >
                 
-                <MenuItem Header="Player Vs Player" Command="{Binding Pvp}" IsCheckable="True" ></MenuItem>
+                <MenuItem Header="Player Vs Player" Command="{Binding Pvp}" IsCheckable="True" IsChecked="True" ></MenuItem>
                 <MenuItem Header="Player Vs Computer" Command="{Binding Pvc}" IsCheckable="True" ></MenuItem>
-                <MenuItem Header="Computer Vs Computer" Command="{Binding Cvc}" IsCheckable="True" ></MenuItem>    
+                <MenuItem Header="Computer Vs Computer" Command="{Binding Cvc}" IsCheckable="True" ></MenuItem>
+                <i:Interaction.Behaviors>
+                    <vm:MenuItemButtonGroupBehavior></vm:MenuItemButtonGroupBehavior>
+                </i:Interaction.Behaviors>
             </MenuItem>
             <MenuItem Header="Difficulty">
                 <MenuItem Header="Easy [depth=3]" Command="{Binding Easy}" IsCheckable="True" IsChecked="True"></MenuItem>
                 <MenuItem Header="Medium [depth=6]" Command="{Binding Medium}" IsCheckable="True"></MenuItem>
                 <MenuItem Header="Hard [depth=9]" Command="{Binding Hard}" IsCheckable="True"></MenuItem>
+                <i:Interaction.Behaviors>
+                    <vm:MenuItemButtonGroupBehavior></vm:MenuItemButtonGroupBehavior>
+                </i:Interaction.Behaviors>
             </MenuItem>
         </Menu>
         <Canvas Width="890" Height="{Binding FirstPanelHeight}">
