@@ -61,6 +61,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModel\BoolToVisibilityConverter.cs" />
     <Compile Include="ViewModel\ConnectFourVM.cs" />
     <Compile Include="ViewModel\MenuItemButtonGroupBehavior.cs" />
     <Compile Include="ViewModel\MouseBehaviour.cs" />

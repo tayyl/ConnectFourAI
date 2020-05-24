@@ -334,7 +334,7 @@ namespace ConnectFourAI.Model
                         column = col;
                     }
                     beta = Math.Min(beta, value);
-                    if (alpha >= beta)
+                   if (alpha >= beta)
                         break;
                 }
                 return new ColumnScore(column,value);

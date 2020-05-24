@@ -11,8 +11,10 @@ using System.Windows.Media;
 using ConnectFourAI.Model;
 namespace ConnectFourAI.ViewModel
 {
+    #region Enums
     enum Mode { PvP=0,PvC=1,CvC=2}
     enum Difficulty { Easy=3,Medium=6,Hard=9}
+    #endregion
     public class CircleItem : INotifyPropertyChanged
     {
         int x;
@@ -128,6 +130,7 @@ namespace ConnectFourAI.ViewModel
         bool aiMove = false;
         Mode mode = Mode.PvP;
         Difficulty difficulty = Difficulty.Medium;
+        Difficulty difficulty2nd = Difficulty.Medium;
         ConnectFourM model;
         int rowIndex = 0, columnIndex = 0, circleMarginBottomIndex = 1, circleMarginLeftIndex = 1;
         int circleMargin = 9;
@@ -175,8 +178,7 @@ namespace ConnectFourAI.ViewModel
                 return cvc;
             }
         }
-
-        ICommand easy;
+                ICommand easy;
         public ICommand Easy
         {
             get
@@ -199,6 +201,31 @@ namespace ConnectFourAI.ViewModel
             get
             {
                 return hard;
+            }
+        }
+        ICommand easy2nd;
+        public ICommand Easy2nd
+        {
+            get
+            {
+                return easy2nd;
+            }
+        }
+
+        ICommand medium2nd;
+        public ICommand Medium2nd
+        {
+            get
+            {
+                return medium2nd;
+            }
+        }
+        ICommand hard2nd;
+        public ICommand Hard2nd
+        {
+            get
+            {
+                return hard2nd;
             }
         }
         #endregion
@@ -227,9 +254,10 @@ namespace ConnectFourAI.ViewModel
                 }
                 CircleItems.Add(circleItem);
             }
+            #region Commands
             restart = new RelayCommand()
             {
-                CanExecuteDelegate = x => model.IsGameEnded,
+                CanExecuteDelegate = x => true,
                 ExecuteDelegate = x =>
                 {
                     model.RestartGame();
@@ -237,6 +265,10 @@ namespace ConnectFourAI.ViewModel
                     {
                         CircleItems[i].Color = new SolidColorBrush(Color.FromRgb(255, 255, 255));
                     }
+                    CurrentPlayerColor =
+                 model.CurrentPlayer == BoardCellState.Player1 ?
+                    new SolidColorBrush(Color.FromRgb(150, 0, 0)) :
+                    new SolidColorBrush(Color.FromRgb(0, 150, 0));
                 }
             };
             pvp = new RelayCommand()
@@ -287,6 +319,30 @@ namespace ConnectFourAI.ViewModel
                     difficulty = Difficulty.Hard;
                 }
             };
+            easy2nd = new RelayCommand()
+            {
+                CanExecuteDelegate = x => mode != Mode.PvP,
+                ExecuteDelegate = x =>
+                {
+                    difficulty2nd= Difficulty.Easy;
+                }
+            };
+            medium2nd = new RelayCommand()
+            {
+                CanExecuteDelegate = x => mode != Mode.PvP,
+                ExecuteDelegate = x =>
+                {
+                    difficulty2nd = Difficulty.Medium;
+                }
+            };
+            hard2nd = new RelayCommand()
+            {
+                CanExecuteDelegate = x => mode != Mode.PvP,
+                ExecuteDelegate = x =>
+                {
+                    difficulty2nd = Difficulty.Hard;
+                }
+            };
             placeCoin = new RelayCommand()
             {
                 CanExecuteDelegate = x => !aiMove && !model.IsGameEnded,
@@ -315,7 +371,7 @@ namespace ConnectFourAI.ViewModel
                                     System.Threading.Thread.Sleep(100);
                                     do
                                     {
-                                        columnScore = model.Minmax(model.GameBoard, (int)difficulty, int.MinValue, int.MaxValue, true);
+                                        columnScore = model.Minmax(model.GameBoard, (int)difficulty2nd, int.MinValue, int.MaxValue, true);
                                         if (model.PlaceCoin(model.GameBoard, columnScore.Column, model.CurrentPlayer, ref placedCoin))
                                         {
                                             Turn(placedCoin);
@@ -354,6 +410,7 @@ namespace ConnectFourAI.ViewModel
                     
                 }
             };
+            #endregion
         }
         void Turn(int[] placedCoin)
         {
@@ -378,12 +435,20 @@ namespace ConnectFourAI.ViewModel
                             new SolidColorBrush(Color.FromRgb(200, 0, 0)) :
                             new SolidColorBrush(Color.FromRgb(0, 200, 0));
                 }
-                MessageBox.Show("Zwyciężył gracz o kolorze "
-                    + (BoardCellState.Player1 == model.CurrentPlayer ?
-                     "czerwonym!" :
-                     "zielonym!")
-                    );
-            }
+                if(mode!=Mode.CvC)
+                    MessageBox.Show("Zwyciężył gracz o kolorze "
+                        + (BoardCellState.Player1 == model.CurrentPlayer ?
+                         "czerwonym!" :
+                         "zielonym!")
+                        );
+                    else
+                        MessageBox.Show("Zwyciężył komputer o kolorze "
+                            + (BoardCellState.Player1 == model.CurrentPlayer ?
+                             "czerwonym! (depth="+difficulty+")" :
+                             "zielonym! (depth="+difficulty2nd+")")
+                            );
+
+                }
             model.ChangePlayer();
             });
         }
@@ -396,6 +461,7 @@ namespace ConnectFourAI.ViewModel
             return mouseXY;
         }
 
+        #region OnPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string propertyName)
@@ -403,5 +469,6 @@ namespace ConnectFourAI.ViewModel
             var handler = PropertyChanged;
             handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
     }
 }
