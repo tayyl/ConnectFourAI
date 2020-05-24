@@ -426,29 +426,32 @@ namespace ConnectFourAI.ViewModel
                     new SolidColorBrush(Color.FromRgb(150, 0, 0)) :
                     new SolidColorBrush(Color.FromRgb(0, 150, 0));
                 OnPropertyChanged("CircleItems");
-            if (model.CheckIfWin(model.GameBoard, model.CurrentPlayer))
-            {
-                foreach(int[] winningElement in model.WinningSequence)
+                if (model.CheckIfWin(model.GameBoard, model.CurrentPlayer))
                 {
+                    foreach (int[] winningElement in model.WinningSequence)
+                    {
                         CircleItems[winningElement[1] + winningElement[0] * model.GameBoard.GetLength(1)].Color =
                         model.CurrentPlayer == BoardCellState.Player1 ?
                             new SolidColorBrush(Color.FromRgb(200, 0, 0)) :
                             new SolidColorBrush(Color.FromRgb(0, 200, 0));
-                }
-                if(mode!=Mode.CvC)
-                    MessageBox.Show("Zwyciężył gracz o kolorze "
-                        + (BoardCellState.Player1 == model.CurrentPlayer ?
-                         "czerwonym!" :
-                         "zielonym!")
-                        );
-                    else
-                        MessageBox.Show("Zwyciężył komputer o kolorze "
-                            + (BoardCellState.Player1 == model.CurrentPlayer ?
-                             "czerwonym! (depth="+difficulty+")" :
-                             "zielonym! (depth="+difficulty2nd+")")
-                            );
+                    }
+                    if (model.WinningSequence.Any())
+                        if (mode != Mode.CvC)
+                            MessageBox.Show("Zwyciężył gracz o kolorze "
+                                + (BoardCellState.Player1 == model.CurrentPlayer ?
+                                 "czerwonym!" :
+                                 "zielonym!")
+                                );
+                        else
+                            MessageBox.Show("Zwyciężył komputer o kolorze "
+                                + (BoardCellState.Player1 == model.CurrentPlayer ?
+                                 "czerwonym! (depth=" + difficulty + ")" :
+                                 "zielonym! (depth=" + difficulty2nd + ")")
+                                );
 
                 }
+                else
+                    MessageBox.Show("Mamy remis!");
             model.ChangePlayer();
             });
         }
