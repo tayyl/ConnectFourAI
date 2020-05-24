@@ -135,6 +135,14 @@ namespace ConnectFourAI.ViewModel
         private double _panelY;
         #endregion
         #region Commands
+        ICommand restart;
+        public ICommand Restart
+        {
+            get
+            {
+                return restart;
+            }
+        }
         ICommand placeCoin;
         public ICommand PlaceCoin
         {
@@ -219,7 +227,18 @@ namespace ConnectFourAI.ViewModel
                 }
                 CircleItems.Add(circleItem);
             }
-
+            restart = new RelayCommand()
+            {
+                CanExecuteDelegate = x => model.IsGameEnded,
+                ExecuteDelegate = x =>
+                {
+                    model.RestartGame();
+                    for (int i = 0; i < CircleItems.Count; i++)
+                    {
+                        CircleItems[i].Color = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+                    }
+                }
+            };
             pvp = new RelayCommand()
             {
                 CanExecuteDelegate = x => true,
@@ -270,7 +289,7 @@ namespace ConnectFourAI.ViewModel
             };
             placeCoin = new RelayCommand()
             {
-                CanExecuteDelegate = x => !aiMove,
+                CanExecuteDelegate = x => !aiMove && !model.IsGameEnded,
                 ExecuteDelegate = x =>
                 {
                     int[] placedCoin = new int[2];
@@ -291,7 +310,7 @@ namespace ConnectFourAI.ViewModel
                                             Turn(placedCoin);
                                             break;
                                         }
-                                    } while (true);
+                                    } while (!model.IsGameEnded);
 
                                     System.Threading.Thread.Sleep(100);
                                     do
@@ -302,9 +321,10 @@ namespace ConnectFourAI.ViewModel
                                             Turn(placedCoin);
                                             break;
                                         }
-                                    } while (true);
+                                    } while (!model.IsGameEnded);
                                     System.Threading.Thread.Sleep(100);
-                                } while (true);
+                                } while (!model.IsGameEnded);
+                                aiMove = false;
                             });
                             break;
                         case Mode.PvP:

@@ -15,6 +15,9 @@ Title="MainWindow" Height="910" Width="900" ResizeMode="NoResize" SizeToContent=
     <StackPanel>
 
         <Menu>
+            <MenuItem Header="Game" IsCheckable="False">
+                <MenuItem Header="Restart" Command="{Binding Restart}" />
+            </MenuItem>
             <MenuItem Header="Mode" >
                 
                 <MenuItem Header="Player Vs Player" Command="{Binding Pvp}" IsCheckable="True" IsChecked="True" ></MenuItem>

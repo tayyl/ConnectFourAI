@@ -20,6 +20,7 @@ namespace ConnectFourAI.Model
     public class ConnectFourM
     {
         #region Attributes
+        public bool IsGameEnded { get; private set; }
         public BoardCellState CurrentPlayer { get; set; }
         public byte[,] GameBoard { get => gameBoard; }
         public List<int[]> WinningSequence { get; set; }
@@ -33,7 +34,14 @@ namespace ConnectFourAI.Model
             gameBoard = new byte[6, 7];
             CurrentPlayer = BoardCellState.Player1;
         }
+        public void RestartGame()
+        {
+            gameBoard = new byte[6, 7];
+            CurrentPlayer = BoardCellState.Player1;
+            WinningSequence = new List<int[]>();
+            IsGameEnded = false;
 
+        }
         public bool PlaceCoin(byte[,] board,int column, BoardCellState player, ref int[] placedCoin)
         {
             if (column > -1)
@@ -98,7 +106,7 @@ namespace ConnectFourAI.Model
                                 new int[2]{i,j+2},
                                 new int[2]{i,j+3}
                             };
-                            return true;
+                            return IsGameEnded=true;
                         }
                         if (i + 3 < HEIGHT)
                         {
@@ -114,7 +122,7 @@ namespace ConnectFourAI.Model
                                 new int[2]{i+2,j},
                                 new int[2]{i+3,j}
                             };
-                                return true;
+                                return IsGameEnded = true;
                             }
                             if (j + 3 < WIDTH &&
                                 (byte)player == board[i + 1, j + 1] && // look up & right
@@ -129,7 +137,7 @@ namespace ConnectFourAI.Model
                                 new int[2]{i+2,j+2},
                                 new int[2]{i+3,j+3}
                             };
-                                return true;
+                                return IsGameEnded = true;
                             }
                             if (j - 3 >= 0 &&
                                 (byte)player == board[i + 1, j - 1] && // look up & left
@@ -144,13 +152,13 @@ namespace ConnectFourAI.Model
                                 new int[2]{i+2,j-2},
                                 new int[2]{i+3,j-3}
                             };
-                                return true;
+                                return IsGameEnded = true;
                             }
                         }
                     }
                 }
             }
-            return false;
+            return IsGameEnded = false;
         }
         public void ChangePlayer()
         {
