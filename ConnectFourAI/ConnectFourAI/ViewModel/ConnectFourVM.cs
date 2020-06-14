@@ -451,7 +451,8 @@ namespace ConnectFourAI.ViewModel
 
                 }
                 else
-                    MessageBox.Show("Mamy remis!");
+                    if(model.IsGameEnded)
+                       MessageBox.Show("Mamy remis!");
             model.ChangePlayer();
             });
         }

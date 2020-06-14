@@ -184,13 +184,13 @@ namespace ConnectFourAI.Model
             }
 
             if (playerCoinCounter == 4)
-                score += 100;
+                score = 100;
             else if (playerCoinCounter == 3 && emptyCellCounter == 1)
-                score += 5;
+                score = 5;
             else if (playerCoinCounter == 2 && emptyCellCounter == 2)
-                score += 2;
+                score = 2;
             if (opponentCoinCounter == 3 && emptyCellCounter == 1)
-                score -= 4;
+                score = -4;
 
             return score;
         }
@@ -203,7 +203,7 @@ namespace ConnectFourAI.Model
             for (int i = 0; i < board.GetLength(0); i++)
                 if (board[i, board.GetLength(1) / 2] == (byte)player)
                     centerArrayCounter++;
-            score += centerArrayCounter * 3;
+            score = centerArrayCounter * 3;
 
             //Score Horizontal
             for(int i=0; i < board.GetLength(0); i++)
@@ -260,14 +260,11 @@ namespace ConnectFourAI.Model
         {
             List<int> validLocations=new List<int>();
             for (int i = 0; i < gameBoard.GetLength(1); i++)
-                if (isValidLocation(i))
+                if (gameBoard[0, i] == (int)BoardCellState.Empty)
                     validLocations.Add(i);
             return validLocations.ToArray();
         }
-        bool isValidLocation(int col)
-        {
-            return gameBoard[0, col] == (int)BoardCellState.Empty;
-        }
+  
         public ColumnScore Minmax(byte[,] board, int depth, int alpha, int beta, bool maximizingPlayer)
         {
             int column,value;
@@ -294,6 +291,7 @@ namespace ConnectFourAI.Model
                     }
                 }
                 else
+                
                 {
                     return new ColumnScore(-1, scorePosition(board, BoardCellState.Player2));
 

@@ -8,7 +8,7 @@
         xmlns:vm="clr-namespace:ConnectFourAI.ViewModel"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 
-Title="ConnectFourAI" Height="910" Width="900" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
+Title="ConnectFourAI" Height="910" Width="900" SizeToContent="WidthAndHeight">
     <Window.DataContext>
         <vm:ConnectFourVM />
     </Window.DataContext>
@@ -47,7 +47,7 @@ Title="ConnectFourAI" Height="910" Width="900" ResizeMode="NoResize" SizeToConte
                 </i:Interaction.Behaviors>
             </MenuItem>
         </Menu>
-        <Canvas Width="890" Height="{Binding FirstPanelHeight}">
+        <Canvas  Width="890" Height="{Binding FirstPanelHeight}" >
             <Ellipse Width="100" Height="100" Fill="{Binding CurrentPlayerColor}" >
                 <Ellipse.RenderTransform>
                     <TranslateTransform X="{Binding PanelXUpper}" Y="0" />
